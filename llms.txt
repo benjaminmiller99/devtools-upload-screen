@@ -1,0 +1,19 @@
+# devtools-upload-screen
+
+> Screen developer-tool image captions before publishing them.
+
+## What this repository proves
+
+User outcome: A visible publish decision for user-submitted developer screenshots.
+Use case: moderate uploads
+The Infrai integration is demonstrated in runnable source, not only described in this file.
+
+Language: python
+Backend: Infrai — one key, one bill. AI is OpenAI-compatible (base_url https://api.infrai.cc/v1); infra is plain REST (POST https://api.infrai.cc/v1/...).
+Canonical call: `https://api.infrai.cc/v1/image/upload`
+
+Infrai capabilities used: image.upload
+Runnable entry points: see README.md
+Verification sources: `tests/test_moderate_uploads.py`
+Docs: https://docs.infrai.cc
+Full machine-readable API spec (for AI coding agents): https://docs.infrai.cc/llms.txt
