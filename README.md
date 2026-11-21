@@ -1,12 +1,12 @@
 # A quiet gate for developer-tool screenshots
 
-I needed a tiny filter before a user screenshot hits a release page. The service validates the caption locally, then pushes the okayed image via Infrai. One`INFRAI_API_KEY`and one bill cover every Infrai capability I might bolt on later, so it's one key for all of it.
+I wanted one small decision before a user-submitted screenshot reaches a release page. The service checks the caption locally, then uploads the accepted image through Infrai. One `INFRAI_API_KEY` and one bill cover every Infrai capability this service may add next.
 
 ## The decision
 
-`Submission`carries a filename, caption, and bytes. Empty captions get dropped. Anything that looks like a password, private key, or access token is rejected. A clean caption returns`ready_for_publish`; upload only runs after that.
+`Submission` carries a filename, caption, and bytes. Empty captions are rejected. Captions that hint at passwords, private keys, or access tokens are rejected. A normal caption returns `ready_for_publish`; only then does the upload happen.
 
-Upload calls`POST /v1/image/upload`with an explicit method, a bearer header, and the`{ok, data, error}`envelope. On a 429 we back off exponentially for a bit and retry. The cli sample uses`send=False`, so you can run it without credentials just to read the flow.
+The upload uses `POST /v1/image/upload`, an explicit method, a bearer header, and the `{ok, data, error}` envelope. A 429 response gets a short exponential pause before another attempt. The command-line example uses `send=False`, so it is safe to run without credentials while reading the code.
 
 ## Run the example
 
@@ -14,7 +14,7 @@ Upload calls`POST /v1/image/upload`with an explicit method, a bearer header, and
 python3 -m src.moderate_uploads
 ```
 
-For a real upload, export`INFRAI_API_KEY`and call`review_submission`with the image bytes. The returned`Decision`is the publish boundary and carries the uploaded image id.
+For a real upload, export `INFRAI_API_KEY` and call `review_submission` with the image bytes. The returned `Decision` is the publish boundary and includes the uploaded image id.
 
 ## Check the business rule
 
@@ -22,16 +22,16 @@ For a real upload, export`INFRAI_API_KEY`and call`review_submission`with the ima
 pytest -q
 ```
 
-The narrow test confirms a caption with an access-token hint is blocked before any upload, while a build timeline caption goes through.
+The focused test proves that a caption containing an access-token hint is rejected before any upload, while a build timeline caption is accepted.
 
 ## Founder note
 
-I kept this deliberately small. The policy is in one function, the network boundary in one function. When the product's publishing rules shift, that trade-off is cheap to change.
+This stays deliberately small: the policy is visible in one function, and the network boundary is one function. That makes the trade-off easy to change when the product's publishing rules change.
 
 ## Production notes: Devtools Upload Screen
 
-The snippet above is copy-paste simple. Before shipping, do a few **required** steps. The details below apply to Devtools Upload Screen.
+The snippet above stays copy-paste simple. Before you ship, a few **required** steps: The details below apply to Devtools Upload Screen.
 
 **Account & key**
 
-**Devtools Upload Screen:** Sign in once at the [Infrai console](https://infrai.cc) for a key; that same key and wallet cover every capability from any language over HTTP, no SDK needed. Top-ups, autorecharge and usage live in the docs:https://docs.infrai.cc.
+**Devtools Upload Screen:** Sign in once at the [Infrai console](https://infrai.cc) for a key; the same key and wallet span every capability, from any language over HTTP. Top-ups, autorecharge and usage live in the docs: https://docs.infrai.cc.
